@@ -1,9 +1,9 @@
 development:
-  adapter: postgresql
-  encoding: unicode
-  database: app1_rails
-  username: sudeepmathur
-  pool: 5
+    adapter: postgresql
+    encoding: unicode
+    database: app1_rails
+    username: sudeepmathur
+    pool: 5
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
