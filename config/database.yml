@@ -1,3 +1,10 @@
+production:
+    adapter: postgresql
+    encoding: unicode
+    database: app1_rails
+    username: sudeepmathur
+    pool: 5
+
 development:
     adapter: postgresql
     encoding: unicode
@@ -14,4 +21,5 @@ test:
     database: app1_rails_test
     username: sudeepmathur
     pool: 5
+
 
