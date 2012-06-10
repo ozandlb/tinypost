@@ -38,7 +38,7 @@ describe "Authentication" do
       it { should have_link('Profile', href: user_path(user)) }
       it { should have_link('Settings', href: edit_user_path(user)) }
       it { should have_link('Sign out', href: signout_path) }
-      
+
       it { should_not have_link('Sign in', href: signin_path) }
 
       describe "followed by signout" do
@@ -54,20 +54,44 @@ describe "Authentication" do
     describe "for non-signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
 
+      it { should_not have_link('Users', href: users_path) }
+      it { should_not have_link('Profile', href: user_path(user)) }
+      it { should_not have_link('Settings', href: edit_user_path(user)) }
+      it { should_not have_link('Sign out', href: signout_path) }
+
       describe "when attempting to visit a protected page" do
+
         before do
           visit edit_user_path(user)
-          fill_in "Email",      with: user.email
-          fill_in "Password",   with: user.password
-          click_button "Sign in"
+          sign_in(user)
         end #before
+
+        #        before do
+        #          visit edit_user_path(user)
+        #          fill_in "Email",      with: user.email
+        #          fill_in "Password",   with: user.password
+        #          click_button "Sign in"
+        #        end #before
 
         describe "after signing in" do
 
           it "should render the desired protected page" do
             page.should have_selector('title', text: 'Edit user')
-
           end #should render the desired protected page
+
+          describe "when signing in again" do
+
+            before do 
+              visit signin_path
+              sign_in(user)
+            end # before
+
+            it "should render the default (profile) page" do
+              page.should have_selector('title', text: user.name)
+            end #should render the default (profile) page
+
+          end # when signing in again
+
         end #after signing in
 
       end #when attempting to visit a protected page
@@ -108,7 +132,7 @@ describe "Authentication" do
       end #submitting a PUT request to the User#update action
 
     end #for wrong user
-    
+
     describe "as non-admin user" do
       let(:user) { FactoryGirl.create(:user) }
       let(:non_admin) { FactoryGirl.create(:user) }
@@ -119,7 +143,7 @@ describe "Authentication" do
         before { delete user_path(user) }
         specify { response.should redirect_to(root_path) }
       end # submitting a DELETE request to the Users#destroy action
-      
+
     end # as non-admin user
 
   end # authorization
