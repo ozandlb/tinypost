@@ -16,24 +16,73 @@ describe "StaticPages" do
     it_should_behave_like "all static pages"
     it { body.should_not have_selector('title', text: '| Home') }
 
+    #it { should_not have_selector('div.pagination') }
+
     describe "for signed in users" do
       let(:user) { FactoryGirl.create(:user) }
 
-      before do
-        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
-        FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
-        sign_in user
-        visit root_path
-      end #before
 
-      it "should render the user's feed" do
-        user.feed.each do |item|
-          page.should have_selector("li##{item.id}", text: item.content)
-        end #do
-      end #should render the user's feed
+      describe "with one micropost" do
 
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+          sign_in user
+          visit root_path
+        end #before
+
+        it "should render the user's feed" do
+          user.feed.each do |item|
+            page.should have_selector("li##{item.id}", text: item.content)
+          end #do |variable|
+        end #should render the user's feed
+
+        it "should have 1 micropost (singular)" do
+          user.microposts.count.should == 1
+          page.should have_selector('span', text: "1 micropost")
+        end # should have 1 micropost (singluar)
+
+      end #with one micropost
+
+      describe "with two microposts" do
+
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+          FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+          sign_in user
+          visit root_path
+        end #before
+
+        it "should render the user's feed" do
+          user.feed.each do |item|
+            page.should have_selector("li##{item.id}", text: item.content)
+          end #do
+        end #should render the user's feed
+
+        it "should have 2 microposts (plural)" do
+          user.microposts.count.should == 2
+          page.should have_selector('span', text: "2 microposts")
+        end # should have 2 microposts (plural)
+
+        describe "pagination" do
+
+          #it "should have a pagination div" do
+          #page.should have_selector('div.pagination')
+          # it { should have_selector("div", class: "falsepositive") }
+          # it { should have_selector('div.pagination') } 
+          # ================  FAILED TEST, PLEASE FIX ===============
+          # ================  FAILED TEST, PLEASE FIX ===============
+          # ================  FAILED TEST, PLEASE FIX ===============
+
+          it "should list each micropost" do
+            Micropost.paginate(page: 1).each do |micropost|
+              page.should have_selector('li#'<<micropost.id.to_s)
+              #pp micropost.id
+            end #each micropost
+          end #should list each micropost
+        end # pagination
+
+      end #with two microposts
     end # for signed in users
-
   end #Home page
 
   describe "Help page" do
