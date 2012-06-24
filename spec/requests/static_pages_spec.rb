@@ -11,7 +11,7 @@ describe "StaticPages" do
 
   describe "Home page" do
     before { visit root_path }
-    let(:heading)     { 'RoR App 1' }
+    let(:heading)     { 'Ruby on Rails Base App' }
     let(:page_title)  { '' }
     it_should_behave_like "all static pages"
     it { body.should_not have_selector('title', text: '| Home') }
